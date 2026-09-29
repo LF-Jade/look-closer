@@ -2,7 +2,7 @@
 
 ## Verified environment
 
-The checks in `scripts/smoke_test.py` were run in exactly this environment:
+The checks in `scripts/smoke_test.py` were first run in exactly this environment:
 
 | Component | Version |
 |---|---|
@@ -25,29 +25,34 @@ pip install "torch==2.8.0" "torchvision==0.23.0" "timm==1.0.30" \
 python scripts/smoke_test.py
 ```
 
+That local run predates the change of the `pre_crop_resize` default from `299` to
+`null`, so it is not a statement about the current revision; see below for what
+covers the current revision.
+
 ## What `requirements.txt` floors mean
 
 The floors in `requirements.txt` are the versions the code is written against;
 they are **not** an exhaustively tested range. `torch>=2.4` reflects the unified
 `torch.amp.GradScaler(device)` API the trainer uses — earlier releases expose
-`torch.cuda.amp.GradScaler()` instead. Only the environment above has been run.
+`torch.cuda.amp.GradScaler()` instead.
+
+## Current revision and CI
+
+The current revision is executed by the CI workflow
+[`.github/workflows/smoke.yml`](../.github/workflows/smoke.yml) on `ubuntu-latest`
+with Python 3.11 and CPU-only PyTorch wheels, for `resnet18` and
+`swin_tiny_patch4_window7_224`. Every push to `main` so far has passed, and the
+workflow is the live record of whether the release default currently works.
+
+Because CI runs `scripts/smoke_test.py` on the current revision, it exercises the
+behavioural changes made after the local run above: wrap-around padding for images
+smaller than one patch, whitespace-safe manifest parsing and missing-file handling,
+the single-patch training-batch guard, relative-path generation, seed propagation,
+and the evaluation limit/JSON paths. What has *not* been re-run is the original
+local macOS / Python 3.9.6 combination against the current revision.
 
 ## Not covered by the checks
 
-* **Local execution vs CI.** The checks were first run on the machine described
-  above, at a point when `pre_crop_resize` still defaulted to `299`. The default
-  was then changed to `null` (source-resolution cropping), together with the
-  sampler signature, the three configs and the `train.py` fallback. The current
-  revision is executed by the CI workflow
-  [`.github/workflows/smoke.yml`](../.github/workflows/smoke.yml) on GitHub
-  runners (Python 3.11, CPU-only wheels) for `resnet18` and
-  `swin_tiny_patch4_window7_224`; the workflow is the live record of whether the
-  release default currently passes.
-* **Subsequent fixes have only been reviewed statically.** These include cyclic
-  padding for small images, whitespace-safe manifest parsing and missing-file
-  handling, the single-patch training-batch guard, relative-path generation,
-  seed propagation, and the evaluation limit/JSON paths. New assertions are
-  included, but have not been run on this revision.
 * **CUDA / mixed precision.** `training.amp` only takes effect on a CUDA device;
   the checks run on CPU, so the `torch.amp.GradScaler` path is constructed only
   when `--device cuda` is used and has not been exercised here.
