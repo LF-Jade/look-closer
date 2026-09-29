@@ -1,8 +1,10 @@
 # Scope, fidelity and limitations
 
-This release is the implementation of the **multi-patch PWS pipeline**. It is
-provided so that the method can be read, run and checked — not as a claim that
-every number in the paper can be regenerated from it.
+This release implements the **multi-patch PWS pipeline** so that the method can be
+read, run and extended. The paper reports the original research experiments;
+this repository packages their core multi-patch method as a reference
+implementation, rather than bundling every experimental variant and trained
+checkpoint.
 
 ## What this repository covers
 
@@ -18,9 +20,9 @@ every number in the paper can be regenerated from it.
 ## What it does not cover
 
 **No detector checkpoints are provided.** Training and evaluating from scratch
-requires the original benchmarks and compute, and reproducing the reported tables
-is not guaranteed because some original implementation and evaluation details are
-unavailable.
+requires the original benchmarks and compute. The reference implementation and
+its CPU checks are separate from reproduction of the paper's benchmark tables;
+the configuration differences relevant to that task are listed below.
 
 Backbone initialisation is separate from this: `model.pretrained: true` downloads
 third-party ImageNet weights for the backbone. That is an initialisation choice
@@ -33,21 +35,25 @@ multi-patch model with one patch is *not* a reproduction of it: the single-patch
 work used a complexity-based selection procedure and a different training
 protocol, and the manuscript describes it as such.
 
-**Fidelity of individual historical runs is not established.** In particular:
+**Configuration mapping for the original experiments.** The following distinctions
+concern which settings this release implements and which run-level details have
+been linked during preparation of the release. They are not a claim that the
+original experiments were not performed or that their records do not exist.
+In particular:
 
 * the transform version behind the historical main-table runs is not identified.
   The manuscript records source-resolution cropping for the default multi-patch
   setting; the retained sampler's active path unconditionally resizes the source
   to 299×299 before cropping and carries no switch, and it does not enlarge
-  patches afterwards. No run, config or log binds either version to a particular
-  result, so this release does not claim to reproduce the historical input path;
+  patches afterwards. Preparation of this release has not linked each reported
+  result to its exact transform version;
 * the low-data subset labels (20% vs 5%) in the single-patch tables cannot be
-  reconciled: no run directory, config or log binds those rows to a particular
-  manifest;
+  reconciled within the reviewed materials: the affected rows have not been
+  linked to a particular manifest;
 * the JPEG quality factor of the perturbation column cannot be verified, and the
   corresponding perturbation-evaluation script has not been located in the
   retained materials;
-* historical checkpoint-selection thresholds were not archived.
+* checkpoint-selection thresholds have not been mapped for every reported run.
 
 These are disclosed in the manuscript and in its evidence ledger rather than
 worked around here.
