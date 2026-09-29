@@ -1,0 +1,21 @@
+# Core, cross-platform requirements for the multi-patch PWS pipeline.
+#
+# VERIFIED on: Python 3.9.6, torch 2.8.0, torchvision 0.23.0, timm 1.0.30,
+# numpy 2.0.2, Pillow 11.3.0, PyYAML 6.0.3 (macOS arm64, CPU).
+# See docs/ENVIRONMENT.md for the full record and the exact install commands.
+#
+# The floors below are the versions the code is written against. They have NOT
+# been exhaustively tested: only the environment above has been run. `torch>=2.4`
+# reflects the unified `torch.amp.GradScaler(device)` API used by the trainer;
+# earlier releases expose `torch.cuda.amp.GradScaler()` instead. Pin exact
+# versions for a reproduction.
+
+torch>=2.4
+torchvision>=0.17
+numpy>=1.23
+Pillow>=9.5
+PyYAML>=6.0
+timm>=0.9            # only needed for the Swin-T and Xception backbones
+
+# No optional dependency is required. The learning-rate schedule is built from
+# torch.optim.lr_scheduler, so a configuration asking for `cosine` always gets it.

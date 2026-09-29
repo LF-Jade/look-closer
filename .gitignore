@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+runs/
+*.pth
+*.log
+.ipynb_checkpoints/
+.DS_Store
+
+# locally generated synthetic data (see scripts/make_synthetic_data.py)
+data/synthetic/

@@ -1,0 +1,39 @@
+# Evaluation on the GenImage generator subsets.
+#
+# CHECKPOINT SELECTION
+# The historical evaluation code scanned `epoch*.pth` and kept the checkpoint with the
+# highest mean accuracy over *these* manifests -- the reported target sets -- with the
+# first manifest acting as a gate. There was no independent validation split, so those
+# scores are optimistic. `scripts/evaluate.py --scan` reproduces that legacy mode for
+# fidelity; pass `--select-on <held-out manifest>` for any new experiment.
+
+run_name: eval_genimage
+seed: 42
+
+model:
+  backbone: resnet50
+  pretrained: false           # weights come from the checkpoint; nothing is downloaded
+  dropout: 0.5
+  input_size: 64              # must equal sampling.patch_size
+
+sampling:
+  patch_size: 64
+  stride: 32
+  max_patches: 64
+  # null = crop at the source resolution (release default). 299 = the retained
+  # resize-before-crop ablation path; see configs/genimage_resnet50.yaml.
+  pre_crop_resize: null
+  resize_mode: pad
+
+eval:
+  batch_size: 16
+  num_workers: 4
+  # Both thresholds are 0-1 ratios.
+  decision_threshold: 0.5     # image score >= this is classified synthetic
+  gate_threshold: 0.0         # 0 disables gating; the historical logs printed this as a
+                              # percentage, e.g. 99.5 -> 0.995
+  # One entry per generator subset, e.g. GenImage/SD1_4/val.txt, SD1_5/val.txt, ...
+  manifests:
+    - data/GenImage/SD1_4/val.txt
+
+checkpoint: runs/genimage_resnet50/final.pth

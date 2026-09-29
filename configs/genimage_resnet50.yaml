@@ -1,0 +1,57 @@
+# Multi-patch PWS training on GenImage (SD v1.4 source), ResNet-50.
+# Settings mirror the saved configuration of the reported run: patch 64 / stride 32,
+# cap 64 patches, image batch 32, lr 0.005, seed 42, 30 epochs, checkpoint every 2000 steps.
+#
+# Quick start without the real benchmark:
+#   python scripts/make_synthetic_data.py --out data/synthetic --count 16
+#   python scripts/train.py --config configs/genimage_resnet50.yaml \
+#       --set data.train_manifest=data/synthetic/train.txt --set training.epochs=1
+
+run_name: genimage_resnet50
+seed: 42
+
+data:
+  # One line per image: "<image path><space><0|1>". See docs/DATA.md.
+  # Paths are written relative to the repository root so the tree stays movable;
+  # absolute paths are accepted too. Run commands from the repository root.
+  train_manifest: data/GenImage/SD1_4/train.txt
+
+model:
+  backbone: resnet50          # resnet18 | resnet34 | resnet50 | swin_tiny_patch4_window7_224 | xception
+  pretrained: true            # ImageNet initialisation for the backbone; this downloads
+                              # third-party weights and is unrelated to detector checkpoints,
+                              # none of which are distributed with this release
+  dropout: 0.5
+  # Must equal sampling.patch_size; it is what the backbone is built for.
+  input_size: 64
+
+sampling:
+  patch_size: 64
+  stride: 32
+  max_patches: 64
+  # null = crop at the source resolution (release default; matches the default
+  #        multi-patch setting described in the manuscript).
+  # 299  = the resize-before-crop ablation path retained in the saved sampler. It
+  #        resizes the whole source image before cropping and does NOT enlarge the
+  #        extracted patches afterwards, so it is only the first half of the
+  #        manuscript's resolution-aligned control, not a full reproduction of it.
+  pre_crop_resize: null
+  resize_mode: pad
+  # The historical training loop never advanced the sampler's epoch offset, so each
+  # image contributed the same subset of candidates on every epoch. Set to true to
+  # redraw the subset each epoch instead.
+  resample_each_epoch: false
+
+training:
+  supervision: patch          # patch (PWS) | image (aggregate logits, then supervise)
+  batch_size: 32              # image batch size; the effective patch batch is larger
+  epochs: 30
+  lr: 0.005
+  weight_decay: 0.01
+  save_interval: 2000         # in steps; 0 disables intermediate checkpoints
+  num_workers: 8
+  amp: true                   # mixed precision, only used when running on CUDA
+  scheduler: cosine           # cosine | none  (cosine = warmup + cosine decay)
+  warmup_fraction: 0.1
+
+output_dir: runs/genimage_resnet50

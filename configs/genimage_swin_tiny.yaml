@@ -1,0 +1,40 @@
+# Multi-patch PWS training on GenImage (SD v1.4 source), Swin-T.
+# Same recipe as configs/genimage_resnet50.yaml with a Transformer backbone.
+# The input size is passed to the backbone explicitly, so it stays equal to patch_size.
+
+run_name: genimage_swin_tiny
+seed: 42
+
+data:
+  # Relative to the repository root; absolute paths are accepted too.
+  train_manifest: data/GenImage/SD1_4/train.txt
+
+model:
+  backbone: swin_tiny_patch4_window7_224
+  pretrained: true            # ImageNet initialisation for the backbone only
+  dropout: 0.5
+  input_size: 64              # must equal sampling.patch_size
+
+sampling:
+  patch_size: 64
+  stride: 32
+  max_patches: 64
+  # null = crop at the source resolution (release default). 299 = the retained
+  # resize-before-crop ablation path; see configs/genimage_resnet50.yaml.
+  pre_crop_resize: null
+  resize_mode: pad
+  resample_each_epoch: false
+
+training:
+  supervision: patch
+  batch_size: 32
+  epochs: 30
+  lr: 0.005
+  weight_decay: 0.01
+  save_interval: 2000
+  num_workers: 8
+  amp: true
+  scheduler: cosine
+  warmup_fraction: 0.1
+
+output_dir: runs/genimage_swin_tiny
