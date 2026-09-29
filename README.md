@@ -1,5 +1,7 @@
 # Look Closer: Patch-wise Supervision for AI-Generated Image Detection
 
+[![smoke test](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml/badge.svg)](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml)
+
 Reference implementation of the **multi-patch** pipeline studied in the paper
 *Look Closer: Patch-wise Supervision for AI-Generated Image Detection*.
 
@@ -11,11 +13,11 @@ crop probabilities are averaged only at inference, into a single image score. No
 handcrafted residual filter, no learned image-level fusion module, and no
 truncated backbone are involved.
 
-> **Verification status.** This is a research reference implementation. It has
-> passed static review; the latest behavioural changes have not been executed. See
-> [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md) for exactly what was and was not
-> verified, and read [docs/SCOPE.md](docs/SCOPE.md) before comparing any number
-> with the paper.
+> **Verification.** `scripts/smoke_test.py` runs in CI on CPU, for ResNet-18 and
+> Swin-T. It checks the pipeline's *behaviour* — sampling geometry, collation, both
+> supervision modes, checkpoint round-trips, metric conventions, the schedule
+> sequence, selection and gating, and error handling — not detection accuracy. See
+> [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
 
 ## Contents
 
@@ -27,7 +29,7 @@ truncated backbone are involved.
 - [Data](#data)
 - [Reported results](#reported-results)
 - [Layout](#layout)
-- [Scope and limitations](#scope-and-limitations)
+- [What is not included](#what-is-not-included)
 - [Paper and citation](#paper-and-citation)
 - [License](#license)
 
@@ -159,16 +161,17 @@ assets/               # figures used by this README
 CITATION.cff          # machine-readable citation
 ```
 
-## Scope and limitations
+## What is not included
 
-Please read [docs/SCOPE.md](docs/SCOPE.md) before comparing against the paper:
+* **Detector checkpoints** — train your own with `scripts/train.py`.
+* **The single-patch selection study (SPD)** — this repository covers the
+  multi-patch pipeline only.
+* **Datasets** — obtain them from their official sources; see
+  [docs/DATA.md](docs/DATA.md).
 
-* only the multi-patch PWS pipeline is included;
-* **no detector checkpoints are provided**, and reproducing the reported tables is
-  not guaranteed — some original implementation and evaluation details are
-  unavailable;
-* the implementation used for the single-patch selection study (SPD) has **not
-  been located in the retained materials** and is not included here.
+For how the released configuration relates to the reported runs, and what the
+historical checkpoint-selection records mean for the reported numbers, see
+[docs/SCOPE.md](docs/SCOPE.md).
 
 ## Paper and citation
 
@@ -191,5 +194,4 @@ posted. Until then, please cite this repository:
 
 ## License
 
-[MIT](LICENSE). The license text is already in the repository, but the choice of
-license is the authors' to confirm before public release.
+[MIT](LICENSE).

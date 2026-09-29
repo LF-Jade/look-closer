@@ -34,14 +34,15 @@ they are **not** an exhaustively tested range. `torch>=2.4` reflects the unified
 
 ## Not covered by the checks
 
-* **The current release default has not been executed.** The checks above were
-  run when `pre_crop_resize` defaulted to `299`. The default was subsequently
-  changed to `null` (source-resolution cropping), together with the sampler
-  signature, the three configs and the `train.py` fallback. The `[1] sampler`
-  block gained a direct assertion on the new default, and the main transform now
-  builds with `pre_crop_resize: None`, but **the modified code has not been run**.
-  Treat the last executed state as historical, not as evidence for the current
-  default.
+* **Local execution vs CI.** The checks were first run on the machine described
+  above, at a point when `pre_crop_resize` still defaulted to `299`. The default
+  was then changed to `null` (source-resolution cropping), together with the
+  sampler signature, the three configs and the `train.py` fallback. The current
+  revision is executed by the CI workflow
+  [`.github/workflows/smoke.yml`](../.github/workflows/smoke.yml) on GitHub
+  runners (Python 3.11, CPU-only wheels) for `resnet18` and
+  `swin_tiny_patch4_window7_224`; the workflow is the live record of whether the
+  release default currently passes.
 * **Subsequent fixes have only been reviewed statically.** These include cyclic
   padding for small images, whitespace-safe manifest parsing and missing-file
   handling, the single-patch training-batch guard, relative-path generation,
