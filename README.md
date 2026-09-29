@@ -1,6 +1,9 @@
 # Look Closer: Patch-wise Supervision for AI-Generated Image Detection
 
-[![smoke test](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml/badge.svg)](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml)
+<!-- TODO(arXiv): replace the placeholder id XXXX.XXXXX with the real arXiv id once the preprint is posted. -->
+<p align="center">
+<a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/static/v1?label=Paper&message=arXiv&color=red" alt="Paper on arXiv"></a>
+</p>
 
 Reference implementation of the **multi-patch** pipeline studied in the paper
 *Look Closer: Patch-wise Supervision for AI-Generated Image Detection*.
@@ -18,6 +21,8 @@ truncated backbone are involved.
 > supervision modes, checkpoint round-trips, metric conventions, the schedule
 > sequence, selection and gating, and error handling — not detection accuracy. See
 > [docs/ENVIRONMENT.md](docs/ENVIRONMENT.md).
+>
+> [![smoke test](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml/badge.svg)](https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml)
 
 ## Contents
 
@@ -25,7 +30,7 @@ truncated backbone are involved.
 - [Quick start (CPU, no benchmark, no downloads)](#quick-start-cpu-no-benchmark-no-downloads)
 - [Train](#train)
 - [Evaluate](#evaluate)
-- [Input handling: read this before comparing with the paper](#input-handling-read-this-before-comparing-with-the-paper)
+- [Input handling](#input-handling)
 - [Data](#data)
 - [Reported results](#reported-results)
 - [Layout](#layout)
@@ -109,20 +114,20 @@ historical logs printed the gate as a percentage, so `99.5` becomes `0.995`.
 `gate_threshold: 0` disables gating. If every candidate fails the gate the command
 exits non-zero.
 
-## Input handling: read this before comparing with the paper
+## Input handling
 
-`pre_crop_resize` defaults to **`null`** — crop at the source resolution, which
-matches the default multi-patch setting described in the manuscript. Setting it to
-`299` selects the resize-before-crop ablation path retained in the original
-sampler.
+Patches are **never upscaled** by this release, and neither setting of
+`pre_crop_resize` restores a historical pipeline:
 
-Neither setting is a full reproduction of a historical pipeline: the manuscript's
-resolution-aligned control also *enlarges the extracted patches* to the backbone
-input size afterwards, and this release does not support that (`model.input_size`
-is bound to `sampling.patch_size`). See
-[docs/SCOPE.md](docs/SCOPE.md#four-settings-that-must-not-be-conflated) for the
-four settings that must be kept apart — manuscript, retained snapshot, this
-release's default, and what has actually been verified here.
+| `pre_crop_resize` | What it does | What it is not |
+|---|---|---|
+| **`null`** (default) | Crops at the source resolution into `sampling.patch_size` patches. This is the release's own default, and it matches the manuscript's description of the default multi-patch setting. | A reproduction of any historical run's transform pipeline. |
+| `299` | Resizes the whole source image to 299×299 *before* cropping — the resize-before-crop path retained in the original sampler. | A reproduction of the manuscript's resolution-aligned control, which *also* enlarges each extracted patch to the backbone input size. That is not supported here: `model.input_size` is bound to `sampling.patch_size`. |
+
+Four different things are involved and must not be conflated: what the manuscript
+records, what the retained research snapshot executes, what this release chooses as
+its default, and what has actually been run and verified here. See
+[docs/SCOPE.md](docs/SCOPE.md#four-settings-that-must-not-be-conflated).
 
 ## Data
 
@@ -136,10 +141,14 @@ which public benchmarks the paper uses.
 ![Reported GenImage means across four backbones](assets/genimage_means.png)
 
 Reported GenImage mean accuracies for the whole-image baselines and for PWS across
-four backbones. These are the paper's reported numbers, shown for orientation
-only. The paper's Section 5.1 documents that the historical selection histories
-are not consistently matched or fully recovered, so these gaps should not be read
-as the direction or magnitude of gains under a common evaluation protocol.
+four backbones. These are the paper's reported numbers, reproduced here for
+orientation only — they were not produced by this repository.
+
+Part of the selection behind these rows used the evaluation sets they are reported
+on, and the remaining selection histories are not fully recovered; the paper marks
+the documented cases `T` and leaves the rest unqualified. Read the differences as
+an account of what was run, not as the direction or magnitude of gains under a
+common evaluation protocol — the paper's Section 5.1 states the full limitation.
 
 ## Layout
 

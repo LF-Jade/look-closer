@@ -7,6 +7,8 @@ abstract: >-
   explicit RGB crops, every crop receives its own classification loss, and crop
   probabilities are averaged only at inference.
 type: software
+version: 0.1.0
+date-released: "2026-09-29"
 authors:
   - family-names: Zhang
     given-names: Zhida
