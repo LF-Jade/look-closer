@@ -1,7 +1,8 @@
 # Look Closer: Patch-wise Supervision for AI-Generated Image Detection
 
-<!-- Add the paper's real arXiv link after the preprint is posted. -->
+<!-- arXiv badge: uncomment the line inside the <p> block below and replace XXXX.XXXXX once the preprint is posted. -->
 <p align="center">
+<!-- <a href="https://arxiv.org/abs/XXXX.XXXXX"><img src="https://img.shields.io/static/v1?label=Paper&message=arXiv&color=red" alt="Paper on arXiv"></a> -->
 <a href="https://github.com/LF-Jade/look-closer/releases/tag/v0.1.0"><img src="https://img.shields.io/badge/release-v0.1.0-blue" alt="Release v0.1.0"></a>
 <a href="https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml"><img src="https://github.com/LF-Jade/look-closer/actions/workflows/smoke.yml/badge.svg" alt="CPU smoke tests"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license"></a>
@@ -218,7 +219,9 @@ historical checkpoint-selection records mean for the reported numbers, see
 **Look Closer: Patch-wise Supervision for AI-Generated Image Detection**
 Zhida Zhang, Tao Wu, Siyu Liu, Jie Cao
 
-<!-- Update this line with the arXiv URL once the preprint is posted. -->
+<!-- When the arXiv id is available: replace the sentence below with
+     "The preprint is available at https://arxiv.org/abs/XXXX.XXXXX.", and add the
+     arXiv entry to the BibTeX block. Keep the results wording as "reported". -->
 The preprint is being prepared for arXiv; the link will be added here when it is
 posted. Until then, please cite this repository:
 

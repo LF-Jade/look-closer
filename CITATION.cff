@@ -26,3 +26,19 @@ keywords:
   - image forensics
   - patch-wise supervision
   - deepfake detection
+
+# Once the preprint is posted, uncomment the block below and fill in the id.
+# preferred-citation:
+#   type: article
+#   title: "Look Closer: Patch-wise Supervision for AI-Generated Image Detection"
+#   authors:
+#     - family-names: Zhang
+#       given-names: Zhida
+#     - family-names: Wu
+#       given-names: Tao
+#     - family-names: Liu
+#       given-names: Siyu
+#     - family-names: Cao
+#       given-names: Jie
+#   year: 2026
+#   url: "https://arxiv.org/abs/XXXX.XXXXX"
