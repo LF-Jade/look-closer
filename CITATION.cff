@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper and this repository."
+title: "Look Closer: Patch-wise Supervision for AI-Generated Image Detection"
+abstract: >-
+  Research reference implementation of the multi-patch patch-wise supervision
+  (PWS) pipeline for AI-generated image detection: a shared backbone classifies
+  explicit RGB crops, every crop receives its own classification loss, and crop
+  probabilities are averaged only at inference.
+type: software
+authors:
+  - family-names: Zhang
+    given-names: Zhida
+  - family-names: Wu
+    given-names: Tao
+  - family-names: Liu
+    given-names: Siyu
+  - family-names: Cao
+    given-names: Jie
+license: MIT
+repository-code: "https://github.com/LF-Jade/look-closer"
+year: 2026
+keywords:
+  - AI-generated image detection
+  - image forensics
+  - patch-wise supervision
+  - deepfake detection
